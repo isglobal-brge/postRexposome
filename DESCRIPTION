@@ -1,0 +1,18 @@
+Package: postRexposome
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.91
+Authors@R: person("Carles", "Hernandez-Ferrer", email = "carles.hernandez@isglobal.cat", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends:
+    R (>= 3.3.1)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    rexposome,
+    Biobase,
+    goseq,
+    BgeeDB,
+    topGO
+RoxygenNote: 5.0.1
+Suggests: disgenet2r
