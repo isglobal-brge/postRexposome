@@ -9,21 +9,21 @@ setMethod(
         if(missing(family)) {
             stop("Missing argument 'family'.")
         }
-        if(class(fData.exp) == "numeric") {
-            fData.exp <- names(Biobase::fData(object))[fData.exp]
-        }
-        texp <- grep(fData.omic, names(Biobase::fData(object)))
-        if(length(texp) == 0) {
-            stop("No datasets matching '", fData.exp, "' in given ",
-                 "'ResultSet'.")
-        } else if (length(texp) > 1) {
-            stop("Multiple datasets were used to create this ",
-                 "'ResultSet'. There is no option to enrich a 'ResultSet' ",
-                 "with multiple annotations for the same type of dataset.")
-        }
-        texp <- names(Biobase::fData(object))[texp]
-        fm <<- unique(object@fData[[texp]]$Family)
-        if(!family %in% unique(object@fData[[texp]]$Family)) {
+        # if(class(fData.exp) == "numeric") {
+        #     fData.exp <- names(Biobase::fData(object))[fData.exp]
+        # }
+        # texp <- grep(fData.omic, names(Biobase::fData(object)))
+        # if(length(texp) == 0) {
+        #     stop("No datasets matching '", fData.exp, "' in given ",
+        #          "'ResultSet'.")
+        # } else if (length(texp) > 1) {
+        #     stop("Multiple datasets were used to create this ",
+        #          "'ResultSet'. There is no option to enrich a 'ResultSet' ",
+        #          "with multiple annotations for the same type of dataset.")
+        # }
+        # texp <- names(Biobase::fData(object))[texp]
+        fm <<- unique(object@fData[[fData.exp]]$Family)
+        if(!family %in% unique(object@fData[[fData.exp]]$Family)) {
             stop("Given family '", family, "' not in 'Resultset'.")
         }
         
