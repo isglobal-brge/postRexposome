@@ -22,7 +22,7 @@ setMethod(
                  "with multiple annotations for the same type of dataset.")
         }
         texp <- names(Biobase::fData(object))[texp]
-        if(!family %in% unique(Biobase::fData(object)[[tmet]]$Family)) {
+        if(!family %in% unique(Biobase::fData(object)[[texp]]$Family)) {
             stop("Given family '", family, "' not in 'Resultset'.")
         }
         
