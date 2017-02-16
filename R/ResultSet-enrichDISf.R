@@ -45,7 +45,7 @@ setMethod(
         sel <<- 
             rownames(object@fData[[fData.exp]])[object@fData[[fData.exp]]$Family == family]
         
-        dta <- rexposome::extract(object, select=sel)
+        dta <- rexposome::extract(object, rid=sel)
         ## --TO CHANGE------------------------------------------------------ ##
         dta$gene <- sapply(pd[rownames(dta), sel.feature], function(x)
             strsplit(x, ";")[[1]][1])
