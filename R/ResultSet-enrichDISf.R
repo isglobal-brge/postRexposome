@@ -1,10 +1,16 @@
 setMethod(
     f = "enrichDISf",
-    definition = function(object, family, fData.exp=1, fData.omic=1,
+    definition = function(object, family, fData.exp=2, fData.omic=1,
                           sel.pval="adj.P.Val", th.pval=0.01, 
                           sel.feature="genes", feature.null="", 
                           database="CURATED", verbose=FALSE, 
                           warnings=TRUE) {
+        if(missing(family)) {
+            stop("Missing argument 'family'.")
+        }
+        if(!family %in% Biobase::fData(object)[[fData.exp]]$Family) {
+            stop("Given family '", family, "' not in 'Resultset'.")
+        }
         if(class(fData.tag) == "numeric") {
             fData.tag <- names(Biobase::fData(object))[fData.tag]
         }
