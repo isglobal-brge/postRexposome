@@ -13,10 +13,10 @@ setMethod(
             fData.exp <- names(Biobase::fData(object))[fData.exp]
         }
         texp <- grep(fData.omic, names(Biobase::fData(object)))
-        if(length(tmet) == 0) {
+        if(length(texp) == 0) {
             stop("No datasets matching '", fData.exp, "' in given ",
                  "'ResultSet'.")
-        } else if (length(tmet) > 1) {
+        } else if (length(texp) > 1) {
             stop("Multiple datasets were used to create this ",
                  "'ResultSet'. There is no option to enrich a 'ResultSet' ",
                  "with multiple annotations for the same type of dataset.")
