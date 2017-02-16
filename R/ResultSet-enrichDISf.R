@@ -5,19 +5,34 @@ setMethod(
                           sel.feature="genes", feature.null="", 
                           database="CURATED", verbose=FALSE, 
                           warnings=TRUE) {
+        ## -- exposures ---------------------------------------------------- ##
         if(missing(family)) {
             stop("Missing argument 'family'.")
         }
-        fm <<- unique(Biobase::fData(object)[[fData.exp]]$Family)
-        if(!family %in% unique(Biobase::fData(object)[[fData.exp]]$Family)) {
+        if(class(fData.exp) == "numeric") {
+            fData.exp <- names(Biobase::fData(object))[fData.exp]
+        }
+        texp <- grep(fData.omic, names(Biobase::fData(object)))
+        if(length(tmet) == 0) {
+            stop("No datasets matching '", fData.exp, "' in given ",
+                 "'ResultSet'.")
+        } else if (length(tmet) > 1) {
+            stop("Multiple datasets were used to create this ",
+                 "'ResultSet'. There is no option to enrich a 'ResultSet' ",
+                 "with multiple annotations for the same type of dataset.")
+        }
+        texp <- names(Biobase::fData(object))[texp]
+        if(!family %in% unique(Biobase::fData(object)[[tmet]]$Family)) {
             stop("Given family '", family, "' not in 'Resultset'.")
         }
-        if(class(fData.tag) == "numeric") {
-            fData.tag <- names(Biobase::fData(object))[fData.tag]
+        
+        ## -- omic --------------------------------------------------------- ##
+        if(class(fData.omic) == "numeric") {
+            fData.omic <- names(Biobase::fData(object))[fData.omic]
         }
-        tmet <- grep(fData.tag, names(Biobase::fData(object)))
+        tmet <- grep(fData.omic, names(Biobase::fData(object)))
         if(length(tmet) == 0) {
-            stop("No datasets matching '", fData.tag, "' in given ",
+            stop("No datasets matching '", fData.omic, "' in given ",
                  "'ResultSet'.")
         } else if (length(tmet) > 1) {
             stop("Multiple datasets were used to create this ",
