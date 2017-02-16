@@ -1,10 +1,10 @@
 Package: postRexposome
 Title: What the Package Does (one line, title case)
-Version: 0.0.0.91
+Version: 0.0.0.92
 Authors@R: person("Carles", "Hernandez-Ferrer", email = "carles.hernandez@isglobal.cat", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.0)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
