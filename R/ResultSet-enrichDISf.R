@@ -8,7 +8,7 @@ setMethod(
         if(missing(family)) {
             stop("Missing argument 'family'.")
         }
-        if(!family %in% Biobase::fData(object)[[fData.exp]]@data$Family) {
+        if(!family %in% unique(Biobase::fData(object)[[fData.exp]]$Family)) {
             stop("Given family '", family, "' not in 'Resultset'.")
         }
         if(class(fData.tag) == "numeric") {
