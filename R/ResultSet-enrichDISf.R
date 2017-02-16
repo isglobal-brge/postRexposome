@@ -41,7 +41,11 @@ setMethod(
         }
         tmet <- names(Biobase::fData(object))[tmet]
         pd <- Biobase::fData(object)[[tmet]]
-        dta <- extract(object)
+        
+        sel <<- 
+            rownames(object@fData[[fData.exp]])[object@fData[[fData.exp]]$Family == family]
+        
+        dta <- rexposome::extract(object, select=sel)
         ## --TO CHANGE------------------------------------------------------ ##
         dta$gene <- sapply(pd[rownames(dta), sel.feature], function(x)
             strsplit(x, ";")[[1]][1])
