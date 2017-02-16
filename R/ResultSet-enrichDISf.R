@@ -22,10 +22,10 @@ setMethod(
         #          "with multiple annotations for the same type of dataset.")
         # }
         # texp <- names(Biobase::fData(object))[texp]
-        fm <<- unique(object@fData[[fData.exp]]$Family)
-        if(!family %in% unique(object@fData[[fData.exp]]$Family)) {
-            stop("Given family '", family, "' not in 'Resultset'.")
-        }
+        dt <<- object@fData[[fData.exp]]@data
+        #if(!family %in% unique(object@fData[[fData.exp]]$Family)) {
+        #    stop("Given family '", family, "' not in 'Resultset'.")
+        #}
         
         ## -- omic --------------------------------------------------------- ##
         if(class(fData.omic) == "numeric") {
