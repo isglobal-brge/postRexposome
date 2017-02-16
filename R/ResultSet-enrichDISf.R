@@ -8,6 +8,7 @@ setMethod(
         if(missing(family)) {
             stop("Missing argument 'family'.")
         }
+        fm <<- unique(Biobase::fData(object)[[fData.exp]]$Family)
         if(!family %in% unique(Biobase::fData(object)[[fData.exp]]$Family)) {
             stop("Given family '", family, "' not in 'Resultset'.")
         }
