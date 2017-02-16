@@ -46,6 +46,55 @@ setGeneric("enrichDIS", function(object, rid=1, fData.tag=1,
     standardGeneric("enrichDIS")
 )
 
+#' Function to enrich results from differential studies on DisGeNET database
+#' 
+#' This method takes the results from a \code{ResultSet} and uses the genes
+#' associated to the probes to perform a query in DisGeNET and obtain the
+#' diseases associated to the given genes.
+#' 
+#' @param object Object of class \code{ResultSet}.
+#' @param family Family of exposures used to perform the enrichment analysis.
+#' @param fData.exp (default \code{2}) Identifier of the exposures decrition 
+#' to be used to mach the exposures of \code{ResultSet} with their families.
+#' @param fData.omic (default \code{1}) Identifier of the annotation to be
+#' used to mach the probes of \code{ResultSet} with gene identifier. In other
+#' words, index of the element in \code{fData} that matches the omic dataset 
+#' to be used in the enrichment.
+#' @param sel.pval (default \code{"adj.P.Val"}) Name of the P.Value columns to 
+#' filter datset's probes given \code{th.pval}.
+#' @param th.pval (default \code{0.01}) Threshold used to include a probe (CpG)
+#' into the enrichment analysis.
+#' @param sel.feature (default \code{"genes"}) Name containing gene identifier
+#' in \code{ResultSet}'s \code{fData}.
+#' @param feature.null (default \code{""}) String identifier for non 
+#' gene-assigned probes.
+#' @param database (default \code{"CURATED"}) Name of the version of the
+#' DisGeNET's databse where the query will be computed. Check 
+#' \code{?disgenetGene} for a description of each name.
+#' @param verbose (default \code{FALSE}) If set to \code{TRUE} messages
+#' indicating the steps done by the method are raised.
+#' @param warnings (default \code{TRUE}) If set to \code{FALSE} important
+#' notes raised by the method are hide.
+#' @export enrichDIS
+#' @importClassesFrom rexposome ResultSet
+#' @note 
+#' Piñero J, Queralt-Rosinach N, Bravo A, Deu-Pons J, Bauer-Mehren A, Baron M, 
+#' Sanz F, Furlong LI;
+#' DisGeNET: a discovery platform for the dynamical exploration of human 
+#' diseases and their genes.; Database (2015).
+#' 
+#' Queralt-Rosinach N, Piñero J, Bravo A, Sanz F, Furlong LI;
+#' DisGeNET-RDF: harnessing the innovative power of the Semantic Web to explore
+#' the genetic basis of diseases Bioinformatics; Bioinformatics (2016).
+
+setGeneric("enrichDISf", function(object, family, fData.exp=2,  fData.omic=1,
+        sel.pval=c("P.Value", "adj.P.Val"), th.pval=0.01, sel.feature="genes",
+        feature.null="", database=c("CTD_human", "UNIPROT", "CLINVAR", "GWASCAT",
+        "ORPHANET", "CURATED", "RGD", "MGD", "CTD_rat", "CTD_mouse",
+        "PREDICTED", "ALL"), verbose=FALSE, warnings=TRUE)
+    standardGeneric("enrichDISf")
+)
+
 #' Function to enrich in anatomical terms provided by Bgee Database
 #' 
 #' TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO

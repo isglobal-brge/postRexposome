@@ -1,6 +1,6 @@
 setMethod(
     f = "enrichDISf",
-    definition = function(object, family, fData.tag=1, fData.tag=1,
+    definition = function(object, family, fData.exp=1, fData.omic=1,
                           sel.pval="adj.P.Val", th.pval=0.01, 
                           sel.feature="genes", feature.null="", 
                           database="CURATED", verbose=FALSE, 
