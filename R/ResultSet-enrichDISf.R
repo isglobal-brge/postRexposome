@@ -12,7 +12,7 @@ setMethod(
         if(class(fData.exp) == "numeric") {
             fData.exp <- names(Biobase::fData(object))[fData.exp]
         }
-        texp <- grep(fData.omic, names(Biobase::fData(object)))
+        texp <- grep(fData.exp, names(Biobase::fData(object)))
         if(length(texp) == 0) {
             stop("No datasets matching '", fData.exp, "' in given ",
                  "'ResultSet'.")
@@ -23,7 +23,7 @@ setMethod(
         }
         texp <- names(Biobase::fData(object))[texp]
         if(!family %in% unique(object@fData[[fData.exp]]$Family)) {
-           stop("Given family '", family, "' not in 'Resultset'.")
+            stop("Given family '", family, "' not in 'Resultset'.")
         }
         
         ## -- omic --------------------------------------------------------- ##
@@ -53,7 +53,7 @@ setMethod(
         inst <- requireNamespace("disgenet2r", quietly = TRUE)
         if(!inst) {
             stop("This method requires 'disgenet2r'. Install 'disgenet2r' by running:\n  devtools::
-install_bitbucket('ibi_group/disgenet2r')\nThen call again 'enrichDISf'.")
+                 install_bitbucket('ibi_group/disgenet2r')\nThen call again 'enrichDISf'.")
         }
         
         if(length(unique(dta$gene)) == 0) {
@@ -67,5 +67,5 @@ install_bitbucket('ibi_group/disgenet2r')\nThen call again 'enrichDISf'.")
         names(dis) <- rid
         
         EnrichSet("enrichDIS", object@fun_origin, unique(dta$gene), dis)
-    }
+        }
 )
