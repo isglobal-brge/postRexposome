@@ -2,12 +2,11 @@
 % Please edit documentation in R/01_AllMethods.R
 \name{enrichDIS}
 \alias{enrichDIS}
-\title{Function to enrich results from differential studies on DisGeNET database}
+\title{Method to enrich results from differential studies on DisGeNET database}
 \usage{
-enrichDIS(object, rid = 1, fData.tag = 1, sel.pval = c("P.Value",
-  "adj.P.Val"), th.pval = 0.01, sel.feature = "genes", feature.null = "",
-  database = c("CTD_human", "UNIPROT", "CLINVAR", "GWASCAT", "ORPHANET",
-  "CURATED", "RGD", "MGD", "CTD_rat", "CTD_mouse", "PREDICTED", "ALL"),
+enrichDIS(object, rid = 1, coef = 2, contrast = 1, fData.tag = 2,
+  sel.pval = "adj.P.Val", th.pval = 0.01, sel.feature = "gene",
+  feature.null = c("", "---"), translate.from = NA, database = "CURATED",
   verbose = FALSE, warnings = TRUE)
 }
 \arguments{
@@ -49,13 +48,18 @@ associated to the probes to perform a query in DisGeNET and obtain the
 diseases associated to the given genes.
 }
 \note{
-Piñero J, Queralt-Rosinach N, Bravo A, Deu-Pons J, Bauer-Mehren A, Baron M, 
+Pinero J, Queralt-Rosinach N, Bravo A, Deu-Pons J, Bauer-Mehren A, Baron M, 
 Sanz F, Furlong LI;
 DisGeNET: a discovery platform for the dynamical exploration of human 
 diseases and their genes.; Database (2015).
 
-Queralt-Rosinach N, Piñero J, Bravo A, Sanz F, Furlong LI;
+Queralt-Rosinach N, Pinero J, Bravo A, Sanz F, Furlong LI;
 DisGeNET-RDF: harnessing the innovative power of the Semantic Web to explore
 the genetic basis of diseases Bioinformatics; Bioinformatics (2016).
 }
-
+\examples{
+data(air)
+ans <- enrichDIS(air, rid="NO2", sel.pval="P.Value", warnings=FALSE,
+    sel.feature="gene_assignment", translate.from="REFSEQ")
+ans
+}

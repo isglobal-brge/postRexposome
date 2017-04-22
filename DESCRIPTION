@@ -1,18 +1,22 @@
 Package: postRexposome
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.92
-Authors@R: person("Carles", "Hernandez-Ferrer", email = "carles.hernandez@isglobal.cat", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Package to enrich exposome-omic data analyis results.
+Version: 0.99.0
+Authors@R: c(person("Carles", "Hernandez-Ferrer", , "carles.hernandez@isglobal.org", c("aut", "cre")),
+    person("Juan R.", "González", ,"juanr.gonzalez@isglobal.org", role = "aut"))
+Maintainer: Carles Hernandez-Ferrer <carles.hernandez@isglobal.org>
+Description: Package for enrichment analysis in KEGG, GO, DisGeNET, GWAS Catalog and Begee for 
+    exposome-omic data analyis results generated with omicRexposome package.
 Depends:
-    R (>= 3.3.0)
-License: What license is it under?
+    R (>= 3.0)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+VignetteBuilder: knitr
 Imports:
-    rexposome,
+    omicRexposome,
     Biobase,
-    goseq,
     BgeeDB,
-    topGO
-RoxygenNote: 5.0.1
+    clusterProfiler, 
+    org.Hs.eg.db
+RoxygenNote: 6.0.1
 Suggests: disgenet2r

@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_AllMethods.R
 \name{enrichANAT}
 \alias{enrichANAT}
-\title{Function to enrich in anatomical terms provided by Bgee Database}
+\title{Method to enrich in anatomical terms provided by Bgee Database}
 \usage{
 enrichANAT(object, rid = 1, fData.tag = 1, sel.pval = c("P.Value",
   "adj.P.Val"), th.pval = 0.01, sel.feature = "genes", feature.null = "",
@@ -59,4 +59,3 @@ Bastian F, Parmentier G, Roux J, Moretti S, Laudet V, Robinson-Rechavi M;
 Bgee: Integrating and Comparing Heterogeneous Transcriptome Data Among 
 Species; Data Integration Life Sci. Lecture Notes in Computer Science (2008)
 }
-

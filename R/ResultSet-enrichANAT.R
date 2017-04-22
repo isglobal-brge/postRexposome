@@ -1,38 +1,44 @@
 setMethod(
     f = "enrichANAT",
     signature = "ResultSet",
-    definition = function(object, rid=1, fData.tag=1,
-                          sel.pval="adj.P.Val", th.pval=0.01, 
-                          sel.feature="genes", feature.null="", 
-                          bgee.data="affymetrix", statistic="fisher",
-                          verbose=FALSE, warnings=TRUE) {
-        stop("- TODO -")
-        if(length(object) != 1 & missing(rid)) {
-            stop("Given 'ResultSet' has more than one result and 'rid' is missing.")
-        } else if(length(object) != 1 & !missing(rid) & class(rid) == "character") {
-            if(!rid %in% names(object)) {
-                stop("Given 'rid' ('", rid, "') not in 'ResultSet'.")
-            }
-        } else if(length(object) == 1) {
+    definition = function(object, rid=1, coef=2, contrast=1,
+        fData.tag=2, sel.pval="adj.P.Val", th.pval=0.01, 
+        sel.feature="genes", feature.null=c("", "---"), translate.from=NA,
+        bgee.data="affymetrix", statistic="fisher", verbose=FALSE, warnings=TRUE) {
+        
+        if(length(object) == 1) {
             rid <- 1
         }
-        tmet <- grep(fData.tag, names(Biobase::fData(object)))
-        if(length(tmet) == 0) {
-            stop("No datasets matching '", fData.tag, "' in given ",
-                 "'ResultSet'.")
-        } else if (length(tmet) > 1) {
-            stop("Multiple datasets were used to create this ",
-                 "'ResultSet'. There is no option to enrich a 'ResultSet' ",
-                 "with multiple annotations for the same type of dataset.")
+        
+        if(class(rid) == "character") {
+            if(!rid %in% omicRexposome::rid(object)) {
+                stop("Given 'rid' ('", rid, "') not in 'ResultSet'.")
+            }
+        } else { # if(class(rid) == "numeric") {
+            rid <- omicRexposome::rid(object)[rid]
         }
-        tmet <- names(Biobase::fData(object))[tmet]
-        pd <- Biobase::fData(object)[[tmet]]
-        dta <- object@results[[rid]]$result
-        dta$gene <- sapply(pd[rownames(dta), sel.feature], function(x)
-            strsplit(x, ";")[[1]][1])
+        
+        if(class(fData.tag) != "numeric") {
+            stop("Content of 'fData.tag' must be numeric.")
+        }
+        
+        pd <- Biobase::fData(object)[[fData.tag]]
+        dta <- omicRexposome::topTable(object, rid=rid, coef=coef, contrast=contrast)
         dta <- dta[!is.na(dta$gene), ]
-        dta <- dta[dta$gene != feature.null, ]
-        dta <- dta[dta[ , sel.pval] <= th.pval, ]
+        dta <- dta[!dta$gene %in% feature.null, ]
+        
+        ## ----------------------------------------------------------------- ##
+        dta2 <- data.frame(transcrit="", gene="", p.value=0, stringsAsFactors=FALSE)
+        for(ii in rownames(dta)) {
+            for(it in strsplit(pd[ii, sel.feature], ";")[[1]]) {
+                dta2 <- rbind(dta2, c(ii, it, dta[ii, sel.pval]))
+            }
+        }
+        dta <- dta2[-1, ];
+        dta$p.value <- as.numeric(dta$p.value)
+        rm(dta2, pd)
+        ## ----------------------------------------------------------------- ##
+        
         
         if(length(unique(dta$gene)) == 0) {
             stop("Filtering result in non probe under requirments. Try ",
@@ -44,32 +50,32 @@ setMethod(
         myTopAnatData <- BgeeDB::loadTopAnatData(bgee)
         
         
-        conv <- read.delim(system.file(paste0("extdata", .Platform$file.sep,
-                                              "ensemble2gene_symbol.tsv"), 
-                                       package = "postRexposome"), 
-                           stringsAsFactors = FALSE)
+        if(!is.na(translate.from)) {
+            xx <- clusterProfiler::bitr(unique(dta$gene), 
+                                           fromType = translate.from, toType = "ENSEMBLTRANS", 
+                                           OrgDb="org.Hs.eg.db")
+            xx$p.value <- sapply(xx[ , 1], function(it) {
+                min(dta$p.value[dta$gene == it])
+            })
+            dta <- xx; rm(xx)
+            colnames(dta) <- c("gene", "_trs", "p.value")
+        } else {
+            dta$`_trs` <- dta[ , sel.feature]
+        }
         
-        myGenes <- conv[conv$hgnc_symbol %in% dta$gene, 1, drop = FALSE]
-        colnames(myGenes) <- "ensembl_gene_id"
-        
-        ## The universe is composed by all the genes with ensemble id
-        universe <- conv[ , 1, drop = FALSE]
-        ## /
-        
-        ## Prepares the gene list vector 
-        geneList <- factor(as.integer(universe[,1] %in% myGenes[,1]))
-        names(geneList) <- universe[,1]
-        ## /
+        filtered <- dta$`_trs`[dta[ , "p.value"] <= th.pval]
+        geneList <- dta$`_trs` %in% filtered
+        names(geneList) <- dta$`_trs`
         
         ## Perform enrichment in Bgee (TopAnat result)
-        myTopAnatObject <-  BgeeDB::topAnat(myTopAnatData, geneList)
+        myTopAnatObject <- BgeeDB::topAnat(myTopAnatData, geneList)
         ## /
         
         ## Prepares the topGO object
         results <- topGO::runTest(myTopAnatObject, 
                                   algorithm = 'classic', 
                                   statistic = statistic)
-        ## 7
+        ## /
         
         ## Create a table with the full result without filtering for FDR 
         ## (setting the cutOff to 1 we include all results)
