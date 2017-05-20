@@ -5,6 +5,18 @@ setMethod(
             database="KEGG", sel.pval="adj.P.Val", th.pval=0.01, 
             sel.feature="genes", feature.id="geneSymbol", feature.null="", 
             plot.fit=FALSE, verbose=FALSE, warnings=TRUE) {
+        
+        
+        mkk <- enrichMKEGG(gene = gene,
+                           organism = 'hsa')
+        
+        david <- enrichDAVID(gene = gene,
+                             idType = "ENTREZ_GENE_ID",
+                             listType = "Gene",
+                             annotation = "KEGG_PATHWAY",
+                             david.user = "clusterProfiler@hku.hk")
+        
+        
         if(length(object) != 1 & missing(rid)) {
             stop("Given 'ResultSet' has more than one result and 'rid' ",
                 "is missing.")

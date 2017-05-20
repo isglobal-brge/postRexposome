@@ -1,47 +1,45 @@
 setMethod(
     f = "enrichDIS",
     signature = "ResultSet",
-    definition = function(object, rid=1, fData.tag=1,
-                          sel.pval="adj.P.Val", th.pval=0.01, 
-                          sel.feature="genes", feature.null="", 
-                          database="CURATED", verbose=FALSE, 
-                          warnings=TRUE) {
-        if(length(object) != 1 & missing(rid)) {
-            stop("Given 'ResultSet' has more than one result and 'rid' ",
-                 "is missing.")
-        } else if(length(object) != 1 & !missing(rid) & class(rid) == "character") {
-            if(!rid %in% names(object)) {
-                stop("Given 'rid' ('", rid, "') not in 'ResultSet'.")
-            }
-        } else if(length(object) == 1) {
+    definition = function(object, rid=1, coef=2, contrast=1,
+        fData.tag=2, sel.pval="adj.P.Val", th.pval=0.01, sel.feature="gene", 
+        feature.null=c("", "---"), translate.from=NA, database="CURATED", 
+        verbose=FALSE, warnings=TRUE) {
+        
+        if(length(object) == 1) {
             rid <- 1
         }
-        if(class(rid) == "numeric") {
-            rid <- names(object@results)[rid]
+        
+        if(class(rid) == "character") {
+            if(!rid %in% omicRexposome::rid(object)) {
+                stop("Given 'rid' ('", rid, "') not in 'ResultSet'.")
+            }
+        } else { # if(class(rid) == "numeric") {
+            rid <- omicRexposome::rid(object)[rid]
         }
         
-        if(class(fData.tag) == "numeric") {
-            fData.tag <- names(Biobase::fData(object))[fData.tag]
+        if(class(fData.tag) != "numeric") {
+            stop("Content of 'fData.tag' must be numeric.")
         }
-        tmet <- grep(fData.tag, names(Biobase::fData(object)))
-        if(length(tmet) == 0) {
-            stop("No datasets matching '", fData.tag, "' in given ",
-                 "'ResultSet'.")
-        } else if (length(tmet) > 1) {
-            stop("Multiple datasets were used to create this ",
-                 "'ResultSet'. There is no option to enrich a 'ResultSet' ",
-                 "with multiple annotations for the same type of dataset.")
-        }
-        tmet <- names(Biobase::fData(object))[tmet]
-        pd <- Biobase::fData(object)[[tmet]]
-        dta <- object@results[[rid]]$result
-        ## --TO CHANGE------------------------------------------------------ ##
-        dta$gene <- sapply(pd[rownames(dta), sel.feature], function(x)
-            strsplit(x, ";")[[1]][1])
-        ## ----------------------------------------------------------------- ##
+        
+        
+        pd <- Biobase::fData(object)[[fData.tag]]
+        dta <- omicRexposome::topTable(object, rid=rid, coef=coef, contrast=contrast)
         dta <- dta[!is.na(dta$gene), ]
-        dta <- dta[dta$gene != feature.null, ]
+        dta <- dta[!dta$gene %in% feature.null, ]
         dta <- dta[dta[ , sel.pval] <= th.pval, ]
+        
+        ## ----------------------------------------------------------------- ##
+        dta2 <- data.frame(transcrit="", gene="", p.value=0, stringsAsFactors=FALSE)
+        for(ii in rownames(dta)) {
+            for(it in strsplit(pd[ii, sel.feature], ";")[[1]]) {
+                dta2 <- rbind(dta2, c(ii, it, dta[ii, sel.pval]))
+            }
+        }
+        dta <- dta2[-1, ];
+        rm(dta2, pd)
+        ## ----------------------------------------------------------------- ##
+        
         
         inst <- requireNamespace("disgenet2r", quietly = TRUE)
         if(!inst) {
@@ -54,11 +52,20 @@ install_bitbucket('ibi_group/disgenet2r')\nThen call again 'enrichDIS'.")
         }
         
         
-        dis <- disgenet2r::disgenetGene(gene=unique(dta$gene), database=database,
-                                 verbose=verbose, warnings=warnings)
+        if(!is.na(translate.from)) {
+            genes <- clusterProfiler::bitr(unique(dta$gene), 
+                fromType = translate.from, toType = "SYMBOL", 
+                OrgDb="org.Hs.eg.db")
+            genes <- unique(genes$SYMBOL)
+        } else {
+            genes <- unique(dta$gene)
+        }
+        
+        dis <- disgenet2r::disgenetGene(gene=genes, database=database, 
+                                        verbose=verbose, warnings=warnings)
         dis <- list(dis)
         names(dis) <- rid
         
-        EnrichSet("enrichDIS", object@fun_origin, unique(dta$gene), dis)
+        EnrichSet("enrichDIS", object@fun_origin, unique(dta$gene), database, dis)
     }
 )

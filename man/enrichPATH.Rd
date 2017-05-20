@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_AllMethods.R
 \name{enrichPATH}
 \alias{enrichPATH}
-\title{Function to enrich results from differential studies on KEGG and GO 
+\title{Method to enrich results from differential studies on KEGG and GO 
 databases}
 \usage{
 enrichPATH(object, rid = 1, fData.tag = 1, version = c("hg18", "hg19"),
@@ -86,4 +86,3 @@ Nucleic Acids Res (2016).
 Kanehisa, M. and Goto, S.; KEGG: Kyoto Encyclopedia of Genes and Genomes. 
 Nucleic Acids Res. 28, 27-30 (2000).
 }
-

@@ -2,9 +2,9 @@ setMethod(
     f = "enrichANAT",
     signature = "ResultSet",
     definition = function(object, rid=1, coef=2, contrast=1,
-        fData.tag=2, sel.pval="adj.P.Val", th.pval=0.01, 
-        sel.feature="genes", feature.null=c("", "---"), translate.from=NA,
-        bgee.data="affymetrix", statistic="fisher", verbose=FALSE, warnings=TRUE) {
+        fData.tag=2, sel.pval="adj.P.Val", th.pval=0.01, sel.feature="genes", 
+        feature.null=c("", "---"), translate.from=NA, bgee.data="affymetrix", 
+        statistic="fisher", verbose=FALSE, warnings=TRUE) {
         
         if(length(object) == 1) {
             rid <- 1
@@ -64,11 +64,18 @@ setMethod(
         }
         
         filtered <- dta$`_trs`[dta[ , "p.value"] <= th.pval]
-        geneList <- dta$`_trs` %in% filtered
+        if(length(filtered) == 0) {
+            stop("Any features is under given significant threashold (p.value <= ", th.pval, ")")
+        }
+        geneList <- factor(as.integer(dta$`_trs` %in% filtered))
         names(geneList) <- dta$`_trs`
         
         ## Perform enrichment in Bgee (TopAnat result)
-        myTopAnatObject <- BgeeDB::topAnat(myTopAnatData, geneList)
+        myTopAnatObject <- tryCatch({
+            BgeeDB::topAnat(myTopAnatData, geneList, nodeSize=1)
+        }, error = function(e) {
+            stop("Any of selected features are in BgeeDB.\n\n", e)
+        })
         ## /
         
         ## Prepares the topGO object
